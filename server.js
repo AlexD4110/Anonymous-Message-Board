@@ -6,9 +6,25 @@ const cors        = require('cors');
 
 const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
+const helmet = require('helmet');
 const runner            = require('./test-runner');
-
+require('./db-connection.js');
 const app = express();
+
+
+// Use helmet to set security headers
+app.use(helmet());
+
+// Only allow your site to be loaded in an iframe on your own pages
+app.use(helmet.frameguard({ action: 'sameorigin' }));
+
+// Do not allow DNS prefetching
+app.use(helmet.dnsPrefetchControl({ allow: false }));
+
+// Only allow your site to send the referrer for your own pages
+app.use(helmet.referrerPolicy({ policy: 'same-origin' }));
+
+
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
